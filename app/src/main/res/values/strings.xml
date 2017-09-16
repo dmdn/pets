@@ -5,7 +5,6 @@
         <item>available</item>
         <item>pending</item>
         <item>sold</item>
-        <item>test</item>
     </string-array>
 
 </resources>
