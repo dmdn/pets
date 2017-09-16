@@ -424,7 +424,14 @@ public class MainActivity extends AppCompatActivity {
         boolean notNull = false;
         for (Tag tag : tags) {
             if (tag != null){
-                notNull = true;
+                try {
+                    tag.getId();
+                    tag.getName();
+                    notNull = true;
+                } catch (Exception e) {
+                    notNull = false;
+                    break;
+                }
             } else {
                 notNull = false;
                 break;
