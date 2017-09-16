@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">ZOO</string>
+
+    <string-array name="pet_list_status">
+        <item>available</item>
+        <item>pending</item>
+        <item>sold</item>
+        <item>test</item>
+    </string-array>
+
+</resources>
