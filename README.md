@@ -24,6 +24,6 @@ The project was created as a test task at one of the interviews
 ![screenshot-zoo-02](https://user-images.githubusercontent.com/19373990/30513064-de2f0824-9b05-11e7-8f1a-2976b2cb9412.jpg)
 
 ![ic_launcher](https://user-images.githubusercontent.com/19373990/30512860-22a718a2-9b01-11e7-8594-bbbf1eb71da5.png)
-[Download APP in APK](https://drive.google.com/file/d/0B_FuLrEepxSsOXJLT25SZXpXb0U/view?usp=sharing)
+[Download APP in APK](https://drive.google.com/file/d/0B_FuLrEepxSsaGw1Y0g5bmpGSzg/view?usp=sharing)
 
 [Screenshots ZOO APP in PDF](https://drive.google.com/file/d/0B_FuLrEepxSsSDNjRVduM1RmSDQ/view?usp=sharing)
