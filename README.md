@@ -4,7 +4,9 @@ Test Task
 ## Project Description
 The project was created as a test task at one of the interviews
 
-When connecting to the Internet, the app takes data from the server. If there is an error on the server side or there is no Internet, the app takes data from the Realm database. In the app, you can create objects (PETs), edit and delete them. All changes are put to the Realm database and sent to the server. When there is no internet changes are put to Realm, and when you connect the Internet, changes are sent to the server
+When connecting to the Internet, the app takes data from the server. If there is an error on the server side or there is no Internet, the app takes data from the Realm database. In the app, you can create objects (PETs), edit and delete them. All changes are put to the Realm database and sent to the server. When there is no internet changes are put to Realm, and when you connect the Internet, changes are sent to the server.
+The app works with the PET category SOLD. In the app, you can search for PETs by NAME in the local database.
+In the menu, you can choose to scroll the list in the END or the START of the list. The list sorted ascending PETs ID. In the menu item you can display the number of PETs in the list.
 
 ## Technical Task
 + Create the project which one will work [Swagger Petstore](http://petstore.swagger.io/) API
