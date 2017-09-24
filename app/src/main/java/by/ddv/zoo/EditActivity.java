@@ -25,6 +25,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 
 import by.ddv.zoo.models.Category;
@@ -69,8 +70,9 @@ public class EditActivity extends AppCompatActivity {
 
     ProgressBar progressBar;
 
-    private Category categoryFromRealm;
-    private RealmList<Tag> tagsFromRealm;
+    private long categoryIdFromRealm;
+    private String categoryNameFromRealm;
+    private ArrayList<Tag> arrayTagsFromRealm;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -252,8 +254,12 @@ public class EditActivity extends AppCompatActivity {
             petJson.setTags(tags);
 
         } else {
-            petJson.setCategory(categoryFromRealm);
-            petJson.setTags(realmListToArrayListTag(tagsFromRealm));
+            Category category = new Category();
+            category.setId(categoryIdFromRealm);
+            category.setName(categoryNameFromRealm);
+            petJson.setCategory(category);
+
+            petJson.setTags(arrayTagsFromRealm);
         }
 
         //create retrofit instance
@@ -299,8 +305,9 @@ public class EditActivity extends AppCompatActivity {
             Pet petForDelete = results.get(0);
 
             //getting a PET data from Realm (category & tags) before deleting
-            categoryFromRealm = petForDelete.getCategory();
-            tagsFromRealm = petForDelete.getTagsRealm();
+            categoryIdFromRealm = petForDelete.getCategory().getId();
+            categoryNameFromRealm = petForDelete.getCategory().getName();
+            arrayTagsFromRealm = realmListToArrayListTag(petForDelete.getTagsRealm());
 
             petForDelete.deleteFromRealm();
             realm.commitTransaction();
@@ -320,7 +327,7 @@ public class EditActivity extends AppCompatActivity {
                 Pet pet = realm.createObject(Pet.class);
                 pet.setId(Long.valueOf(etId.getText().toString()));
                 pet.setName(etName.getText().toString());
-                pet.setPhotoUrlsRealm(arrayListToRealmList(petUrlsArrayList));
+                pet.setPhotoUrlsRealm(arrayListToRealmListRealmString(petUrlsArrayList));
                 pet.setStatus(getStatusFromSpinner());
 
                 if (hasConnection(getApplicationContext())){
@@ -342,8 +349,13 @@ public class EditActivity extends AppCompatActivity {
 
                         pet.setChange("created_by_me");
                     } else {
-                        pet.setCategory(categoryFromRealm);
-                        pet.setTags(tagsFromRealm);
+                        Category category = realm.createObject(Category.class);
+                        category.setId(categoryIdFromRealm);
+                        category.setName(categoryNameFromRealm);
+                        pet.setCategory(category);
+
+                        pet.setTags(arrayListToRealmListTag(arrayTagsFromRealm));
+
                         pet.setChange("changed_by_me");
                     }
                 }
@@ -365,7 +377,16 @@ public class EditActivity extends AppCompatActivity {
     }
 
 
-    private RealmList<RealmString> arrayListToRealmList(ArrayList<String> arrayList) {
+    private RealmList<Tag> arrayListToRealmListTag(ArrayList<Tag> list) {
+        RealmList<Tag> tagsRealmList = new RealmList<>();
+        for (Tag tag : list) {
+            tagsRealmList.add(tag);
+        }
+        return tagsRealmList;
+    }
+
+
+    private RealmList<RealmString> arrayListToRealmListRealmString(ArrayList<String> arrayList) {
 
         RealmList<RealmString> realmList = new RealmList<>();
 

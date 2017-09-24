@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -85,10 +84,6 @@ public class MyRealmRecyclerViewAdapter extends RealmRecyclerViewAdapter<Pet, My
         final long petId = pet.getId();
         final String petName = pet.getName();
         final String petStatus = pet.getStatus();
-
-        Log.e("^^^^^", "id= "+petId);
-        Log.e("^^^^^", "name= "+petName);
-
 
         RealmList<RealmString> realmStrings = pet.getPhotoUrlsRealm();
         ArrayList<String> petListPhotoUrls = new ArrayList<>();
