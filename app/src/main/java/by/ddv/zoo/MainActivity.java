@@ -5,13 +5,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.design.widget.FloatingActionButton;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
@@ -55,10 +59,22 @@ public class MainActivity extends AppCompatActivity {
 
     ProgressDialog progressDialog;
 
+    FloatingActionButton fab;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, EditActivity.class);
+                intent.putExtra("request_type", "POST");
+                startActivity(intent);
+            }
+        });
 
         realm = Realm.getDefaultInstance();
 
@@ -70,19 +86,166 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.setMessage("Please wait");
         progressDialog.setCancelable(false);
 
-        if (hasConnection(this)){//checking for an internet connection
-
-            progressDialog.show();//show ProgressDialog
-
-            sendNetworkRequestWithChangedData();//sending data created locally
-            deleteOldDataFromRealm();//delete old data from Realm
-            loadJsonToRealm();//get JSON from net and save to Realm
-
-            progressDialog.dismiss();//hide ProgressDialog
-        }
-        setUpRecyclerView();//get data from Realm
+        loadData();
 
     }
+
+
+    private void loadData() {
+
+        progressDialog.show();//show ProgressDialog
+
+        if (hasConnection(this)){//checking for an internet connection
+            sendNetworkRequestWithChangedData();//sending data created locally
+        }
+
+        //get JSON from net and save to Realm
+        RequestInterface requestInterface = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build().create(RequestInterface.class);
+
+        //get PET status=available
+/*
+        compositeDisposable.add(requestInterface.getPetRx1()
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMapIterable(new Function<List<Pet>, List<Pet>>() {
+                    @Override
+                    public List<Pet> apply(List<Pet> v) {
+                        return v;
+                    }
+                })
+                .filter(new Predicate<Pet>() {//Checking objects for valid
+                    @Override
+                    public boolean test(Pet v) {
+                        if (v.getPhotoUrls() != null && v.getPhotoUrls().size() != 0){
+                            v.setPhotoUrlsRealm(listToRealmListString(v.getPhotoUrls()));
+                        }
+
+                        if (v.getTags() != null && v.getTags().size() != 0){
+                            v.setTagsRealm(listToRealmListTag(v.getTags()));
+                        }
+
+                        v.setChange("from_net");
+
+                        return  v.getName() != null &&
+                                v.getCategory() != null &&
+                                isCategoryFieldNotNull(v.getCategory()) &&
+                                v.getPhotoUrls() != null &&
+                                v.getPhotoUrls().size() != 0 &&
+                                isPhotoUrlsNull(v.getPhotoUrls()) &&
+                                v.getTags() != null &&
+                                v.getTags().size() != 0 &&
+                                isTagNotNull(v.getTags()) &&
+                                v.getStatus() != null;
+                    }
+                })
+                .toList()
+                .subscribeOn(Schedulers.io())
+                .subscribe(this::handleResponse,this::handleError));
+
+        //get PET status=pending
+
+        compositeDisposable.add(requestInterface.getPetRx2()
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMapIterable(new Function<List<Pet>, List<Pet>>() {
+                    @Override
+                    public List<Pet> apply(List<Pet> v) {
+                        return v;
+                    }
+                })
+                .filter(new Predicate<Pet>() {//Checking objects for valid
+                    @Override
+                    public boolean test(Pet v) {
+                        if (v.getPhotoUrls() != null && v.getPhotoUrls().size() != 0){
+                            v.setPhotoUrlsRealm(listToRealmListString(v.getPhotoUrls()));
+                        }
+
+                        if (v.getTags() != null && v.getTags().size() != 0){
+                            v.setTagsRealm(listToRealmListTag(v.getTags()));
+                        }
+
+                        return  v.getName() != null &&
+                                v.getCategory() != null &&
+                                isCategoryFieldNotNull(v.getCategory()) &&
+                                v.getPhotoUrls() != null &&
+                                v.getPhotoUrls().size() != 0 &&
+                                isPhotoUrlsNull(v.getPhotoUrls()) &&
+                                v.getTags() != null &&
+                                v.getTags().size() != 0 &&
+                                isTagNotNull(v.getTags()) &&
+                                v.getStatus() != null;
+                    }
+                })
+                .toList()
+                .subscribeOn(Schedulers.io())
+                .subscribe(this::handleResponse,this::handleError));
+*/
+        //get PET status=sold
+        compositeDisposable.add(requestInterface.getPetRx3()
+                .observeOn(AndroidSchedulers.mainThread())
+                .flatMapIterable(new Function<List<Pet>, List<Pet>>() {
+                    @Override
+                    public List<Pet> apply(List<Pet> v) {
+                        return v;
+                    }
+                })
+                .filter(new Predicate<Pet>() {//Checking objects for valid
+                    @Override
+                    public boolean test(Pet v) {
+                        if (v.getPhotoUrls() != null && v.getPhotoUrls().size() != 0){
+                            v.setPhotoUrlsRealm(listToRealmListString(v.getPhotoUrls()));
+                        }
+
+                        if (v.getTags() != null && v.getTags().size() != 0 && isTagNotNull(v.getTags())){
+                            v.setTagsRealm(listToRealmListTag(v.getTags()));
+                        }
+
+                        v.setChange("from_net");
+
+                        return  v.getName() != null &&
+                                v.getCategory() != null &&
+                                isCategoryFieldNotNull(v.getCategory()) &&
+                                v.getPhotoUrls() != null &&
+                                v.getPhotoUrls().size() != 0 &&
+                                isPhotoUrlsNull(v.getPhotoUrls()) &&
+                                v.getTags() != null &&
+                                v.getTags().size() != 0 &&
+                                isTagNotNull(v.getTags()) &&
+                                v.getStatus() != null;
+                    }
+                })
+                .toList()
+                .subscribeOn(Schedulers.io())
+                .subscribe(this::handleResponse,this::handleError));
+
+    }
+
+
+    private void handleResponse(List<Pet> petsList) {
+
+        deleteOldDataFromRealm();//delete old data from Realm
+
+        //save data to Realm
+        realm.beginTransaction();
+        realm.copyToRealmOrUpdate(petsList);
+        realm.commitTransaction();
+
+        setUpRecyclerView();//get data from Realm
+
+        progressDialog.dismiss();//hide ProgressDialog
+    }
+
+    private void handleError(Throwable error) {
+        Log.e("Throwable error", error.getLocalizedMessage());
+        Toast.makeText(this, "Error "+error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
+
+        setUpRecyclerView();//get data from Realm
+
+        progressDialog.dismiss();//hide ProgressDialog
+    }
+
 
     private void sendNetworkRequestWithChangedData() {
 
@@ -110,6 +273,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onNext(Pet value) {
                                     Toast.makeText(MainActivity.this, "PET id=" + value.getId() + " added to the server", Toast.LENGTH_LONG).show();
+                                    deleteOldPetFromRealm(value.getId());//delete old data from Realm
                                 }
 
                                 @Override
@@ -147,6 +311,7 @@ public class MainActivity extends AppCompatActivity {
                                 @Override
                                 public void onNext(Pet value) {
                                     Toast.makeText(MainActivity.this, "PET id=" + value.getId() + " updated on the server", Toast.LENGTH_LONG).show();
+                                    deleteOldPetFromRealm(value.getId());
                                 }
 
                                 @Override
@@ -183,7 +348,8 @@ public class MainActivity extends AppCompatActivity {
                             .subscribe(new DisposableObserver<Void>() {
                                 @Override
                                 public void onNext(Void value) {
-                                    Toast.makeText(MainActivity.this, "PET id=" + value + " deleted on the server", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(MainActivity.this, "PET id=" + petJson.getId() + " deleted on the server", Toast.LENGTH_LONG).show();
+                                    deleteOldPetFromRealm(petJson.getId());
                                 }
 
                                 @Override
@@ -208,6 +374,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void deleteOldPetFromRealm(long id) {
+        petsListRealm = realm.where(Pet.class).equalTo("id", id).findAll();
+        realm.beginTransaction();
+        petsListRealm.deleteAllFromRealm();
+        realm.commitTransaction();
+    }
+
     private Pet createPetJson(Pet pet) {
         long id = pet.getId();
         Category category = new Category();
@@ -230,144 +403,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void loadJsonToRealm() {
-
-        RequestInterface requestInterface = new Retrofit.Builder()
-                .baseUrl(BASE_URL)
-                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .addConverterFactory(GsonConverterFactory.create())
-                .build().create(RequestInterface.class);
-
-        //get PET status=available
-        compositeDisposable.add(requestInterface.getPetRx1()
-                .observeOn(AndroidSchedulers.mainThread())
-                .flatMapIterable(new Function<List<Pet>, List<Pet>>() {
-                    @Override
-                    public List<Pet> apply(List<Pet> v) {
-                        return v;
-                    }
-                })
-                .filter(new Predicate<Pet>() {//Checking objects for valid
-                    @Override
-                    public boolean test(Pet v) {
-                        if (v.getPhotoUrls() != null && v.getPhotoUrls().size() != 0){
-                            v.setPhotoUrlsRealm(listToRealmListString(v.getPhotoUrls()));
-                        }
-
-                        if (v.getTags() != null && v.getTags().size() != 0){
-                            v.setTagsRealm(listToRealmListTag(v.getTags()));
-                        }
-
-                        return  v.getName() != null &&
-                                v.getCategory() != null &&
-                                v.getId() != 0L &&
-                                v.getPhotoUrls() != null &&
-                                v.getPhotoUrls().size() != 0 &&
-                                v.getTags() != null &&
-                                v.getTags().size() != 0 &&
-                                isTagNotNull(v.getTags()) &&
-                                v.getStatus() != null;
-                    }
-                })
-                .toList()
-                .subscribeOn(Schedulers.io())
-                .subscribe(this::handleResponse,this::handleError));
-
-        //get PET status=pending
-        compositeDisposable.add(requestInterface.getPetRx2()
-                .observeOn(AndroidSchedulers.mainThread())
-                .flatMapIterable(new Function<List<Pet>, List<Pet>>() {
-                    @Override
-                    public List<Pet> apply(List<Pet> v) {
-                        return v;
-                    }
-                })
-                .filter(new Predicate<Pet>() {//Checking objects for valid
-                    @Override
-                    public boolean test(Pet v) {
-                        if (v.getPhotoUrls() != null && v.getPhotoUrls().size() != 0){
-                            v.setPhotoUrlsRealm(listToRealmListString(v.getPhotoUrls()));
-                        }
-
-                        if (v.getTags() != null && v.getTags().size() != 0){
-                            v.setTagsRealm(listToRealmListTag(v.getTags()));
-                        }
-
-                        return  v.getName() != null &&
-                                v.getCategory() != null &&
-                                v.getId() != 0L &&
-                                v.getPhotoUrls() != null &&
-                                v.getPhotoUrls().size() != 0 &&
-                                v.getTags() != null &&
-                                v.getTags().size() != 0 &&
-                                isTagNotNull(v.getTags()) &&
-                                v.getStatus() != null;
-                    }
-                })
-                .toList()
-                .subscribeOn(Schedulers.io())
-                .subscribe(this::handleResponse,this::handleError));
-
-        //get PET status=sold
-        compositeDisposable.add(requestInterface.getPetRx3()
-                .observeOn(AndroidSchedulers.mainThread())
-                .flatMapIterable(new Function<List<Pet>, List<Pet>>() {
-                    @Override
-                    public List<Pet> apply(List<Pet> v) {
-                        return v;
-                    }
-                })
-                .filter(new Predicate<Pet>() {//Checking objects for valid
-                    @Override
-                    public boolean test(Pet v) {
-                        if (v.getPhotoUrls() != null && v.getPhotoUrls().size() != 0){
-                            v.setPhotoUrlsRealm(listToRealmListString(v.getPhotoUrls()));
-                        }
-
-                        if (v.getTags() != null && v.getTags().size() != 0){
-                            v.setTagsRealm(listToRealmListTag(v.getTags()));
-                        }
-
-                        return  v.getId() != 0L &&
-                                v.getCategory() != null &&
-                                v.getName() != null &&
-                                v.getPhotoUrls() != null &&
-                                v.getPhotoUrls().size() != 0 &&
-                                v.getTags() != null &&
-                                v.getTags().size() != 0 &&
-                                isTagNotNull(v.getTags()) &&
-                                v.getStatus() != null;
-                    }
-                })
-                .toList()
-                .subscribeOn(Schedulers.io())
-                .subscribe(this::handleResponse,this::handleError));
-
-    }
-
-
-
-    private void handleResponse(List<Pet> petsList) {
-
-        realm.beginTransaction();
-
-
-
-        realm.copyToRealmOrUpdate(petsList);
-        realm.commitTransaction();
-    }
-
-    private void handleError(Throwable error) {
-        Log.e("Throwable error", error.getLocalizedMessage());
-        Toast.makeText(this, "Error "+error.getLocalizedMessage(), Toast.LENGTH_LONG).show();
-
-    }
-
     private void setUpRecyclerView() {
 
         petsListRealm = realm.where(Pet.class)
                 .notEqualTo("change", "deleted_by_me")
                 .findAll();
+
+        petsListRealm = petsListRealm.sort("id");//Sort ascending
 
         recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
 
@@ -420,21 +462,45 @@ public class MainActivity extends AppCompatActivity {
         return arrayListTags;
     }
 
+    private boolean isCategoryFieldNotNull(Category category) {
+        boolean notNull;
+        if (category != null){
+            try {
+                category.getId();
+                category.getName();
+                notNull = true;
+            } catch (Exception e) {
+                notNull = false;
+            }
+        } else notNull = false;
+        return notNull;
+    }
+
+    private boolean isPhotoUrlsNull(List<String> photoUrls) {
+        boolean notNull = false;
+
+        for (String str : photoUrls){
+            if (str.equals("") || str == null){
+                notNull = false;
+                break;
+            } else notNull = true;
+        }
+
+        return notNull;
+    }
+
     private boolean isTagNotNull(List<Tag> tags) {
 
         boolean notNull = false;
 
         for (Tag tag : tags) {
-
             if (tag != null){
-
                 try {
                     tag.getId();
                     tag.getName();
                     notNull = true;
 
                 } catch (Exception e) {
-
                     notNull = false;
                     break;
                 }
@@ -451,19 +517,9 @@ public class MainActivity extends AppCompatActivity {
     private RealmList<Tag> listToRealmListTag(List<Tag> list) {
         RealmList<Tag> tagsRealmList = new RealmList<>();
         for (Tag tag : list) {
-            if (tag == null){
-                Tag tagNull = new Tag();
-                tagNull.setId(0L);
-                tagNull.setName("null");
-                tagsRealmList.add(tagNull);
-            } else {
-                if (tag.getName() == null){
-                    tag.setName("null");
-                }
-                tagsRealmList.add(tag);
-            }
+            tagsRealmList.add(tag);
         }
-        return null;
+        return tagsRealmList;
     }
 
 
@@ -491,7 +547,30 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        MenuItem search = menu.findItem(R.id.search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(search);
+        search(searchView);
+        
         return true;
+    }
+
+    private void search(SearchView searchView) {
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+
+                if (recyclerViewAdapter != null) recyclerViewAdapter.getFilter().filter(newText);
+                return true;
+            }
+        });
     }
 
     @Override
@@ -499,27 +578,48 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_create_new_pet:
-                Intent intent = new Intent(MainActivity.this, EditActivity.class);
-                intent.putExtra("request_type", "POST");
-                startActivity(intent);
-                break;
+
             case R.id.action_refresh:
                 recyclerView.setAdapter(null);
 
-                if (hasConnection(this)){//checking for an internet connection
-
-                    progressDialog.show();//show ProgressDialog
-
-                    sendNetworkRequestWithChangedData();//sending data created locally
-                    deleteOldDataFromRealm();//delete old data from Realm
-                    loadJsonToRealm();//get JSON from net and save to Realm
-
-                    progressDialog.dismiss();//hide ProgressDialog
-                }
-                setUpRecyclerView();//get data from Realm
+                loadData();
 
                 Toast.makeText(this, "The data was refreshed", Toast.LENGTH_LONG).show();
+                break;
+            case R.id.action_end_list:
+
+                //auto scroll up RecyclerView
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Call smooth scroll
+                        recyclerView.smoothScrollToPosition(recyclerViewAdapter.getItemCount());
+                    }
+                });
+
+                break;
+
+            case R.id.action_start_list:
+
+                //auto scroll up RecyclerView
+                recyclerView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        // Call smooth scroll
+                        recyclerView.smoothScrollToPosition(0);
+                    }
+                });
+
+                break;
+
+            case R.id.action_info:
+                String numberPETs = String.valueOf(recyclerViewAdapter.getItemCount());
+                CustomDialogFragment dialog = new CustomDialogFragment();
+                Bundle args = new Bundle();
+                args.putString("number_pets", numberPETs);
+                dialog.setArguments(args);
+                dialog.show(getSupportFragmentManager(), "custom");
+
                 break;
         }
 

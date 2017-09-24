@@ -69,6 +69,9 @@ public class EditActivity extends AppCompatActivity {
 
     ProgressBar progressBar;
 
+    private Category categoryFromRealm;
+    private RealmList<Tag> tagsFromRealm;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -121,6 +124,10 @@ public class EditActivity extends AppCompatActivity {
             tvPhotoUri.setText(petPhotoUrls);
 
             etId.setText(Long.toString(petId));
+            //disabling EditText
+            etId.setFocusable(false);
+            etId.setEnabled(false);
+
             etName.setText(petName);
 
             spinnerStatus.setSelection(setPetStatus(petStatus));
@@ -195,13 +202,15 @@ public class EditActivity extends AppCompatActivity {
                     return;
                 }
 
-                if (hasConnection(getApplicationContext())){
-                    sendNetworkRequest(REQUEST_TYPE);
-                }
-
                 saveToRealm(REQUEST_TYPE);
 
-                progressBar.setVisibility(ProgressBar.INVISIBLE);
+                if (hasConnection(getApplicationContext())){
+                    sendNetworkRequest(REQUEST_TYPE);
+                } else {
+                    progressBar.setVisibility(ProgressBar.INVISIBLE);
+                }
+
+
 
                 Toast.makeText(EditActivity.this, "PET id=" + etId.getText() + " " + REQUEST_TYPE + " successfully :)", Toast.LENGTH_LONG).show();
 
@@ -223,31 +232,29 @@ public class EditActivity extends AppCompatActivity {
     private void sendNetworkRequest(String requestType) {
 
         Pet petJson = new Pet();
-
-        if (requestType.equals("POST")){
-            petJson.setId(Long.valueOf(etId.getText().toString()));
-        } else {
-            petJson.setId(petId);
-        }
-
+        petJson.setId(Long.valueOf(etId.getText().toString()));
         petJson.setName(etName.getText().toString());
-
-        Category category = new Category();
-        category.setId(0L);
-        category.setName("string");
-        petJson.setCategory(category);
-
         petJson.setPhotoUrls(petUrlsArrayList);
-
-        ArrayList<Tag> tags = new ArrayList<>();
-        Tag tag = new Tag();
-        tag.setId(0L);
-        tag.setName("string");
-        tags.add(tag);
-        petJson.setTags(tags);
-
         petJson.setStatus(getStatusFromSpinner());
 
+        if (requestType.equals("POST")){
+
+            Category category = new Category();
+            category.setId(0L);
+            category.setName("string");
+            petJson.setCategory(category);
+
+            ArrayList<Tag> tags = new ArrayList<>();
+            Tag tag = new Tag();
+            tag.setId(0L);
+            tag.setName("string");
+            tags.add(tag);
+            petJson.setTags(tags);
+
+        } else {
+            petJson.setCategory(categoryFromRealm);
+            petJson.setTags(realmListToArrayListTag(tagsFromRealm));
+        }
 
         //create retrofit instance
         Retrofit.Builder builder = new Retrofit.Builder()
@@ -267,11 +274,13 @@ public class EditActivity extends AppCompatActivity {
         call.enqueue(new Callback<Pet>() {
             @Override
             public void onResponse(Call<Pet> call, Response<Pet> response) {
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
                 Toast.makeText(EditActivity.this, "PET id=" + petJson.getId() + " " + requestType + " successfully :)", Toast.LENGTH_LONG).show();
             }
 
             @Override
             public void onFailure(Call<Pet> call, Throwable t) {
+                progressBar.setVisibility(ProgressBar.INVISIBLE);
                 Toast.makeText(EditActivity.this, "Something went wrong :(", Toast.LENGTH_LONG).show();
             }
         });
@@ -288,6 +297,11 @@ public class EditActivity extends AppCompatActivity {
 
             realm.beginTransaction();
             Pet petForDelete = results.get(0);
+
+            //getting a PET data from Realm (category & tags) before deleting
+            categoryFromRealm = petForDelete.getCategory();
+            tagsFromRealm = petForDelete.getTagsRealm();
+
             petForDelete.deleteFromRealm();
             realm.commitTransaction();
 
@@ -304,41 +318,50 @@ public class EditActivity extends AppCompatActivity {
             public void execute(Realm realm) {
 
                 Pet pet = realm.createObject(Pet.class);
+                pet.setId(Long.valueOf(etId.getText().toString()));
+                pet.setName(etName.getText().toString());
+                pet.setPhotoUrlsRealm(arrayListToRealmList(petUrlsArrayList));
+                pet.setStatus(getStatusFromSpinner());
 
                 if (hasConnection(getApplicationContext())){
                     pet.setChange("from_net");
                 } else {
                     if (requestType.equals("POST")){
-                        long id = Long.valueOf(etId.getText().toString());
-                        pet.setId(id);
+
+                        Category category = realm.createObject(Category.class);
+                        category.setId(0L);
+                        category.setName("string");
+                        pet.setCategory(category);
+
+                        Tag tag = realm.createObject(Tag.class);
+                        tag.setId(0L);
+                        tag.setName("string");
+                        RealmList<Tag> tagsRealm = new RealmList<>();
+                        tagsRealm.add(tag);
+                        pet.setTagsRealm(tagsRealm);
+
                         pet.setChange("created_by_me");
                     } else {
-                        pet.setId(petId);
+                        pet.setCategory(categoryFromRealm);
+                        pet.setTags(tagsFromRealm);
                         pet.setChange("changed_by_me");
                     }
                 }
 
-                Category category = realm.createObject(Category.class);
-                category.setId(0L);
-                category.setName("string");
-                pet.setCategory(category);
-
-                pet.setName(etName.getText().toString());
-
-                pet.setPhotoUrlsRealm(arrayListToRealmList(petUrlsArrayList));
-
-                Tag tag = realm.createObject(Tag.class);
-                tag.setId(0L);
-                tag.setName("string");
-                RealmList<Tag> tagsRealm = new RealmList<>();
-                tagsRealm.add(tag);
-                pet.setTagsRealm(tagsRealm);
-
-                pet.setStatus(getStatusFromSpinner());
-
             }
         });
 
+    }
+
+    private ArrayList<Tag> realmListToArrayListTag(RealmList<Tag> tagsRealm) {
+        ArrayList<Tag> arrayListTags = new ArrayList<>();
+        for (Tag tag:tagsRealm){
+            Tag tagJson = new Tag();
+            tagJson.setId(tag.getId());
+            tagJson.setName(tag.getName());
+            arrayListTags.add(tagJson);
+        }
+        return arrayListTags;
     }
 
 

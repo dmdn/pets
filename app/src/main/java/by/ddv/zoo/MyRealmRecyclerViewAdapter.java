@@ -5,7 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,17 +20,26 @@ import android.widget.Toast;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 import by.ddv.zoo.models.Category;
 import by.ddv.zoo.models.Pet;
 import by.ddv.zoo.models.RealmString;
 import by.ddv.zoo.models.Tag;
 import by.ddv.zoo.network.RequestInterface;
+import io.realm.Case;
 import io.realm.OrderedRealmCollection;
+import io.realm.OrderedRealmCollectionSnapshot;
 import io.realm.Realm;
 import io.realm.RealmList;
+import io.realm.RealmQuery;
 import io.realm.RealmRecyclerViewAdapter;
 import io.realm.RealmResults;
+import io.realm.Sort;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,13 +48,24 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 
-public class MyRealmRecyclerViewAdapter extends RealmRecyclerViewAdapter<Pet, MyRealmRecyclerViewAdapter.ViewHolder> {
+import android.widget.Filter;
+import android.widget.Filterable;
+
+
+
+public class MyRealmRecyclerViewAdapter extends RealmRecyclerViewAdapter<Pet, MyRealmRecyclerViewAdapter.ViewHolder> implements Filterable {
 
     final Context context;
+
+    private OrderedRealmCollection<Pet> mArrayList;
+    private OrderedRealmCollection<Pet> mFilteredList;
+
 
     public MyRealmRecyclerViewAdapter(Context context, OrderedRealmCollection<Pet> data) {
         super(data, true);
         this.context = context;
+        mArrayList = data;
+        mFilteredList = data;
         //setHasStableIds(true);//support for animation insert / change / delete one element
     }
 
@@ -63,6 +85,9 @@ public class MyRealmRecyclerViewAdapter extends RealmRecyclerViewAdapter<Pet, My
         final long petId = pet.getId();
         final String petName = pet.getName();
         final String petStatus = pet.getStatus();
+
+        Log.e("^^^^^", "id= "+petId);
+        Log.e("^^^^^", "name= "+petName);
 
 
         RealmList<RealmString> realmStrings = pet.getPhotoUrlsRealm();
@@ -281,6 +306,53 @@ public class MyRealmRecyclerViewAdapter extends RealmRecyclerViewAdapter<Pet, My
         }
         return false;
     }
+
+
+
+
+    //SearchView with RecyclerView in Realm
+    public Filter getFilter() {
+
+        PetFilter filter = new PetFilter(this);
+        return filter;
+    }
+
+    private class PetFilter
+            extends Filter {
+        private final MyRealmRecyclerViewAdapter adapter;
+
+        private PetFilter(MyRealmRecyclerViewAdapter adapter) {
+            super();
+            this.adapter = adapter;
+        }
+
+        @Override
+        protected FilterResults performFiltering(CharSequence constraint) {
+            return new FilterResults();
+        }
+
+        @Override
+        protected void publishResults(CharSequence constraint, FilterResults results) {
+            adapter.filterResults(constraint.toString());
+
+        }
+    }
+
+    //filter results by name
+    public void filterResults(String text) {
+        text = text == null ? null : text.toLowerCase().trim();
+        final Realm realm = Realm.getDefaultInstance();
+        if(text == null || "".equals(text)) {
+            updateData(realm.where(Pet.class).findAll());
+        } else {
+            updateData(realm.where(Pet.class)
+                    .contains("name", text, Case.INSENSITIVE)
+                    .findAll());
+        }
+        realm.close();
+    }
+
+
 
 
 }

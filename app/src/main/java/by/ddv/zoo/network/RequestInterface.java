@@ -17,6 +17,7 @@ import retrofit2.http.Path;
 public interface RequestInterface {
 
     //access Pets by rxJava
+    //@GET("pet/findByStatus?status=test")
     @GET("pet/findByStatus?status=pending")
     Observable<List<Pet>> getPetRx1();
 

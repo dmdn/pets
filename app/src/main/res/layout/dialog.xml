@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+android:padding="16dp"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/tvNumberPETs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Number of PETs"/>
+
+    <TextView
+        android:id="@+id/tvNumberAvailable"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="With status available"/>
+
+    <TextView
+        android:id="@+id/tvNumberPending"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="With status pending"/>
+
+    <TextView
+        android:id="@+id/tvNumberSold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="With status sold"/>
+
+</LinearLayout>
