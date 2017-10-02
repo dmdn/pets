@@ -30,6 +30,6 @@ In the menu, you can choose to scroll the list in the END or the START of the li
 ![screenshot_2017-09-24-15-51-19](https://user-images.githubusercontent.com/19373990/30782829-01fd0bc4-a142-11e7-8aed-33fbddada4c6.png)
 
 ![ic_launcher](https://user-images.githubusercontent.com/19373990/30512860-22a718a2-9b01-11e7-8594-bbbf1eb71da5.png)
-[Download APP in APK](https://drive.google.com/file/d/0B_FuLrEepxSsaGw1Y0g5bmpGSzg/view?usp=sharing)
+[Download APP in APK](https://drive.google.com/file/d/0B_FuLrEepxSsZnRfdHRsbUNFVmM/view?usp=sharing)
 
-[Screenshots ZOO APP in PDF](https://drive.google.com/file/d/0B_FuLrEepxSsSDNjRVduM1RmSDQ/view?usp=sharing)
+[Screenshots ZOO APP in PDF](https://drive.google.com/file/d/0B_FuLrEepxSsdjNSamJjNjMzeEE/view?usp=sharing)
