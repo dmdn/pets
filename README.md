@@ -8,6 +8,8 @@ When connecting to the Internet, the app takes data from the server. If there is
 The app works with the PET category SOLD. In the app, you can search for PETs by NAME in the local database.
 In the menu, you can choose to scroll the list in the END or the START of the list. The list sorted ascending PETs ID. In the menu item you can display the number of PETs in the list.
 
+In addition, Notifications about updating application data from the server were displayed. The Notification is displayed after 60 seconds and shows the last updatings data. The Notification is displayed using Services.
+
 ## Technical Task
 + Create the project which one will work [Swagger Petstore](http://petstore.swagger.io/) API
 + Use all API under the PET categories
@@ -23,13 +25,16 @@ In the menu, you can choose to scroll the list in the END or the START of the li
 + [RxJava 2](https://github.com/ReactiveX/RxJava)
 + Databases [Realm](https://realm.io/docs/java/latest/)
 + [Picasso](http://square.github.io/picasso/)
++ Service
++ Notifications
 
 ![screenshot_2017-09-24-15-44-21](https://user-images.githubusercontent.com/19373990/30782831-020053c4-a142-11e7-852b-576097023fdb.png)
 ![screenshot_2017-09-24-15-45-12](https://user-images.githubusercontent.com/19373990/30782830-01ffaf28-a142-11e7-9eef-ba6bb67d3672.png)
 ![screenshot_2017-09-24-15-44-50](https://user-images.githubusercontent.com/19373990/30782832-020076b0-a142-11e7-97f3-474eabd9ee45.png)
 ![screenshot_2017-09-24-15-51-19](https://user-images.githubusercontent.com/19373990/30782829-01fd0bc4-a142-11e7-8aed-33fbddada4c6.png)
+![screenshot_2017-10-02-15-12-19](https://user-images.githubusercontent.com/19373990/31076965-5a56e10c-a785-11e7-93df-ae0aba7f57ad.png)
 
 ![ic_launcher](https://user-images.githubusercontent.com/19373990/30512860-22a718a2-9b01-11e7-8594-bbbf1eb71da5.png)
-[Download APP in APK](https://drive.google.com/file/d/0B_FuLrEepxSsZnRfdHRsbUNFVmM/view?usp=sharing)
+[Download APP in APK](https://drive.google.com/file/d/0B_FuLrEepxSsejVqQ2xjdXJoM1k/view?usp=sharing)
 
-[Screenshots ZOO APP in PDF](https://drive.google.com/file/d/0B_FuLrEepxSsdjNSamJjNjMzeEE/view?usp=sharing)
+[Screenshots ZOO APP in PDF](https://drive.google.com/file/d/0B_FuLrEepxSsVzBXTnNTRk1qOFE/view?usp=sharing)
