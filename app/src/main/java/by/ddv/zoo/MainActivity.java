@@ -22,7 +22,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import by.ddv.zoo.models.Category;
@@ -30,6 +33,7 @@ import by.ddv.zoo.models.Pet;
 import by.ddv.zoo.models.RealmString;
 import by.ddv.zoo.models.Tag;
 import by.ddv.zoo.network.RequestInterface;
+import by.ddv.zoo.service.UpdateZooService;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
 import io.reactivex.functions.Function;
@@ -60,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
 
     FloatingActionButton fab;
+    private Intent intentService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -232,10 +237,28 @@ public class MainActivity extends AppCompatActivity {
         realm.copyToRealmOrUpdate(petsList);
         realm.commitTransaction();
 
+        startUpdateZooService();
         setUpRecyclerView();//get data from Realm
 
         progressDialog.dismiss();//hide ProgressDialog
     }
+
+    private void stopUpdateZooService() {
+        UpdateZooService.lastUpdate = null;
+    }
+
+    private void startUpdateZooService() {
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss / dd-MM-yyyy");
+        Date date = new Date();
+        String currentDate = dateFormat.format(date);
+
+        UpdateZooService.lastUpdate = currentDate;
+
+        intentService = new Intent(this, UpdateZooService.class);
+        intentService.putExtra("last_update", currentDate);
+        startService(intentService);
+    }
+
 
     private void handleError(Throwable error) {
         Log.e("Throwable error", error.getLocalizedMessage());
