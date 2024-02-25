@@ -1,4 +1,4 @@
-# ZOO (Android)
+# Pets (Android)
 ## Project Description
 The project was created as a test task at one of the interviews
 
