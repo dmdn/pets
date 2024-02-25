@@ -1,6 +1,4 @@
-# ZOO
-Test Task
-
+# ZOO (Android)
 ## Project Description
 The project was created as a test task at one of the interviews
 
@@ -34,5 +32,5 @@ In addition, Notifications about updating application data from the server were 
 ![screenshot_2017-09-24-15-51-19](https://user-images.githubusercontent.com/19373990/30782829-01fd0bc4-a142-11e7-8aed-33fbddada4c6.png)
 ![screenshot_2017-10-02-15-12-19](https://user-images.githubusercontent.com/19373990/31076965-5a56e10c-a785-11e7-93df-ae0aba7f57ad.png)
 
-
-The installation file `.apk` can be found in `./storage/zoo_beta_0.3.apk`
+### App version
++ APP version 0.3: installation file `.apk` can be found in `./storage/zoo_beta_0.3.ap`
