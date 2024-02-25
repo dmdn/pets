@@ -35,3 +35,5 @@ In addition, Notifications about updating application data from the server were 
 ![ic_launcher](https://user-images.githubusercontent.com/19373990/30512860-22a718a2-9b01-11e7-8594-bbbf1eb71da5.png)
 ### App version
 + APP version 0.3: installation file `.apk` can be found in `./storage/zoo_beta_0.3.ap`
+
+Note: The application was created in 2017.
