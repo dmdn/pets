@@ -34,7 +34,5 @@ In addition, Notifications about updating application data from the server were 
 ![screenshot_2017-09-24-15-51-19](https://user-images.githubusercontent.com/19373990/30782829-01fd0bc4-a142-11e7-8aed-33fbddada4c6.png)
 ![screenshot_2017-10-02-15-12-19](https://user-images.githubusercontent.com/19373990/31076965-5a56e10c-a785-11e7-93df-ae0aba7f57ad.png)
 
-![ic_launcher](https://user-images.githubusercontent.com/19373990/30512860-22a718a2-9b01-11e7-8594-bbbf1eb71da5.png)
-[Download APP in APK](https://drive.google.com/file/d/0B_FuLrEepxSsejVqQ2xjdXJoM1k/view?usp=sharing)
 
-[Screenshots ZOO APP in PDF](https://drive.google.com/file/d/0B_FuLrEepxSsVzBXTnNTRk1qOFE/view?usp=sharing)
+The installation file `.apk` can be found in `./storage/zoo_beta_0.3.apk`
