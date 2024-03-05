@@ -36,4 +36,4 @@ In addition, Notifications about updating application data from the server were 
 ### App version
 + APP version 0.3: installation file `.apk` can be found in `./storage/zoo_beta_0.3.ap`
 
-Note: The application was created in 2017.
+Note: The application was created in 2017
